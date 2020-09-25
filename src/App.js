@@ -9,8 +9,6 @@ class BooksApp extends React.Component {
   state = {
     showSearchPage: false,
     books: [],
-    book: [],
-    selectValue: "",
   };
 
   componentDidMount() {
@@ -26,27 +24,13 @@ class BooksApp extends React.Component {
   addBook = (book, shelf) => {
     BooksAPI.update(book, shelf).then((newBook) => {
       this.setState((currentState) => ({
-        books: currentState.books.filter((b) => {
-          return b.id !== book.id;
-        }),
+        books: currentState.books
+          .filter((b) => {
+            return b.id !== book.id;
+          })
+          .concat({ ...book, shelf }),
       }));
     });
-
-    /*
-    if (category === "currentlyReading") {
-      this.setState((currentState) => ({
-        currentlyReading: currentState.currentlyReading.concat([book]),
-      }));
-    } else if (category === "wantToRead") {
-      this.setState((currentState) => ({
-        currentlyReading: currentState.wantToRead.concat([book]),
-      }));
-    } else if (category === "read") {
-      this.setState((currentState) => ({
-        currentlyReading: currentState.read.concat([book]),
-      }));
-    }
-    */
   };
 
   render() {
