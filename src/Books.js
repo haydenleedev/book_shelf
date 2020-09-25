@@ -1,16 +1,17 @@
 import React, { Component } from "react";
 import "./App.css";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
 class Books extends Component {
-  handleChange = (e, book, index) => {
-    if (this.props.category) {
-      this.props.category(e.target.value);
-    }
+  static propTypes = {
+    books: PropTypes.array.isRequired,
+    handleChange: PropTypes.func.isRequired,
+  };
 
-    console.log("target: ", e.target.value);
+  handleChange = (e, book) => {
     if (this.props.addBook) {
-      this.props.addBook(book, e.target.value, index);
+      this.props.addBook(book, e.target.value);
     }
   };
 
@@ -19,7 +20,7 @@ class Books extends Component {
     return (
       <div className="bookshelf-books">
         <ol className="books-grid">
-          {books.map((book, index) => {
+          {books.map((book) => {
             return (
               <li key={book.id}>
                 <div className="book">
@@ -29,14 +30,14 @@ class Books extends Component {
                       style={{
                         width: 128,
                         height: 193,
-                        backgroundImage: `url("${
-                          book.imageLinks.smallThumbnail
-                        }")`,
+                        backgroundImage: `url("${book.imageLinks &&
+                          book.imageLinks.thumbnail}")`,
                       }}
                     />
                     <div className="book-shelf-changer">
                       <select
-                        onChange={(e) => this.handleChange(e, book, index)}
+                        value={book.shelf !== undefined ? book.shelf : "none"}
+                        onChange={(e) => this.handleChange(e, book)}
                       >
                         <option value="move" disabled>
                           Move to...
@@ -51,7 +52,9 @@ class Books extends Component {
                     </div>
                   </div>
                   <div className="book-title">{book.title}</div>
-                  <div className="book-authors">{book.authors[0]}</div>
+                  <div className="book-authors">
+                    {book.authors && book.authors.map((author) => author)}
+                  </div>
                 </div>
               </li>
             );

@@ -43,6 +43,8 @@ jspm_packages/
 
 # Testing directories
 src - Copy/
+src - Copy (2)/
+src - Copy(2)/
 
 # TypeScript v1 declaration files
 typings/

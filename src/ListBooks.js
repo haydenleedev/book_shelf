@@ -2,23 +2,26 @@ import React, { Component } from "react";
 import "./App.css";
 import { Link } from "react-router-dom";
 import Books from "./Books";
+import PropTypes from "prop-types";
 
 class ListBooks extends Component {
-  onSelectChange = (selectValue) => {
-    if (this.props.handleCategory) {
-      this.props.handleCategory(selectValue);
-      console.log("ListBooks: ", selectValue);
-    }
+  static propTypes = {
+    books: PropTypes.array.isRequired,
+    updateBook: PropTypes.func.isRequired,
   };
-
-  updateBook = (book, category, index) => {
+  updateBook = (book, shelf) => {
     if (this.props.addBook) {
-      this.props.addBook(book, category, index);
-      console.log("book1: ", book, +"category1: " + category);
+      this.props.addBook(book, shelf);
     }
   };
   render() {
-    const { books, currentlyReading, wantToRead, read, none } = this.props;
+    const { books } = this.props;
+
+    const currentlyReading = books.filter(
+      (book) => book.shelf === "currentlyReading"
+    );
+    const wantToRead = books.filter((book) => book.shelf === "wantToRead");
+    const read = books.filter((book) => book.shelf === "read");
     return (
       <div className="wrapper">
         {console.log(books)}
@@ -30,29 +33,17 @@ class ListBooks extends Component {
             <div>
               <div className="bookshelf">
                 <h2 className="bookshelf-title">Currently Reading</h2>
-                <Books
-                  books={currentlyReading}
-                  category={this.onSelectChange}
-                  addBook={this.updateBook}
-                />
+                <Books books={currentlyReading} addBook={this.updateBook} />
               </div>
 
               <div className="bookshelf">
                 <h2 className="bookshelf-title">Want to Read</h2>
-                <Books
-                  books={wantToRead}
-                  category={this.onSelectChange}
-                  addBook={this.updateBook}
-                />
+                <Books books={wantToRead} addBook={this.updateBook} />
               </div>
 
               <div className="bookshelf">
                 <h2 className="bookshelf-title">Read</h2>
-                <Books
-                  books={read}
-                  category={this.onSelectChange}
-                  addBook={this.updateBook}
-                />
+                <Books books={read} addBook={this.updateBook} />
               </div>
             </div>
           </div>

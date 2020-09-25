@@ -9,16 +9,7 @@ class BooksApp extends React.Component {
   state = {
     showSearchPage: false,
     books: [],
-    currentlyReading: [],
-    wantToRead: [],
-    read: [],
     book: [],
-    shelves: [
-      {
-        book: [],
-        shelf: "",
-      },
-    ],
     selectValue: "",
   };
 
@@ -30,51 +21,15 @@ class BooksApp extends React.Component {
         }))
       );
     });
-
-    BooksAPI.getAll().then((currentlyReading) => {
-      currentlyReading.map(
-        (book, index) =>
-          book.shelf === "currentlyReading" &&
-          this.setState((currentState) => ({
-            currentlyReading: currentState.currentlyReading.concat([book]),
-          }))
-      );
-    });
-
-    BooksAPI.getAll().then((wantToRead) => {
-      wantToRead.map(
-        (book, index) =>
-          book.shelf === "wantToRead" &&
-          this.setState((currentState) => ({
-            wantToRead: currentState.wantToRead.concat([book]),
-          }))
-      );
-    });
-
-    BooksAPI.getAll().then((read) => {
-      read.map(
-        (book, index) =>
-          book.shelf === "read" &&
-          this.setState((currentState) => ({
-            read: currentState.read.concat([book]),
-          }))
-      );
-    });
   } // get all book lists via API and add it to books state.
 
-  addCategory = (book) => {
-    this.setState((currentState) => ({
-      // currentlyReading: currentState.currentlyReading.concat([book]),
-    }));
-  };
-
-  addBook = (book, shelf, index) => {
-    BooksAPI.update(book, shelf).then((book) => {
-      this.setState((prevState) => {
-        const books = [...prevState.books];
-        books[index] = { ...books[index], [shelf]: shelf };
-      });
-      console.log("thumbnail: ", book);
+  addBook = (book, shelf) => {
+    BooksAPI.update(book, shelf).then((newBook) => {
+      this.setState((currentState) => ({
+        books: currentState.books.filter((b) => {
+          return b.id !== book.id;
+        }),
+      }));
     });
 
     /*
@@ -92,8 +47,6 @@ class BooksApp extends React.Component {
       }));
     }
     */
-
-    console.log("book: " + book + "category: " + shelf);
   };
 
   render() {
@@ -102,30 +55,19 @@ class BooksApp extends React.Component {
         <Route
           exact
           path="/"
-          render={(history) => (
-            <ListBooks
-              books={this.state.books}
-              currentlyReading={this.state.currentlyReading}
-              wantToRead={this.state.wantToRead}
-              read={this.state.read}
-              handleCategory={(book) => {
-                this.addCategory(book);
-                history.push("/");
-              }}
-              addBook={this.addBook}
-            />
+          render={() => (
+            <ListBooks books={this.state.books} addBook={this.addBook} />
           )}
         />
         <Route
           path="/Search"
-          render={(history) => (
+          render={({ history }) => (
             <AddaBook
               books={this.state.books}
-              handleCategory={(book) => {
-                this.addCategory(book);
+              addBook={(book, shelf) => {
+                this.addBook(book, shelf);
                 history.push("/");
               }}
-              addBook={this.addBook}
             />
           )}
         />
