@@ -9,21 +9,27 @@ class AddaBook extends Component {
   };
   updateQuery = (query) => {
     this.setState(() => ({
-      query: query.trim(),
+      query: query,
     }));
+
+    if (this.props.search) {
+      this.props.search(query);
+      console.log("search: ", query);
+    }
   };
   clearQuery = () => {
     this.updateQuery("");
   };
 
-  handleChange = (e, book, index) => {
-    if (this.props.category) {
-      this.props.category(e.target.value);
-    }
-
-    console.log("target2: ", e.target.value);
+  handleChange = (e, book) => {
     if (this.props.addBook) {
-      this.props.addBook(book, e.target.value, index);
+      this.props.addBook(book, e.target.value);
+    }
+  };
+
+  updateBook = (book, shelf) => {
+    if (this.props.addBook) {
+      this.props.addBook(book, shelf);
     }
   };
 
@@ -68,41 +74,7 @@ class AddaBook extends Component {
         </div>
         <div className="search-books-results">
           <ol className="books-grid">
-            {showingBooks.map((book, index) => (
-              <li key={book.id}>
-                <div className="book">
-                  <div className="book-top">
-                    <div
-                      className="book-cover"
-                      style={{
-                        width: 128,
-                        height: 193,
-                        backgroundImage: `url("${
-                          book.imageLinks.smallThumbnail
-                        }")`,
-                      }}
-                    />
-                    <div className="book-shelf-changer">
-                      <select
-                        onChange={(e) => this.handleChange(e, book, index)}
-                      >
-                        <option value="move" disabled>
-                          Move to...
-                        </option>
-                        <option value="currentlyReading">
-                          Currently Reading
-                        </option>
-                        <option value="wantToRead">Want to Read</option>
-                        <option value="read">Read</option>
-                        <option value="none">None</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className="book-title">{book.title}</div>
-                  <div className="book-authors">{book.authors[0]}</div>
-                </div>
-              </li>
-            ))}
+            <Books books={showingBooks} addBook={this.updateBook} />
           </ol>
         </div>
       </div>

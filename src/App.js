@@ -9,6 +9,8 @@ class BooksApp extends React.Component {
   state = {
     showSearchPage: false,
     books: [],
+    searchedBooks: [],
+    searchTerm: "",
   };
 
   componentDidMount() {
@@ -33,6 +35,31 @@ class BooksApp extends React.Component {
     });
   };
 
+  callSearch = (query) => {
+    this.setState({ searchTerm: query });
+  };
+
+  searchBook = (query) => {
+    this.setState({ searchTerm: query });
+    if (query !== "") {
+      BooksAPI.search(query).then((books) => {
+        if (Array.isArray(books)) {
+          books.forEach((book) => {
+            this.state.books.forEach((newBook) => {
+              if (newBook.id === book.id) {
+                book.shelf = newBook.shelf;
+              }
+            });
+          });
+
+          this.setState((currentState) => ({
+            searchedBooks: books.filter((b) => b),
+          }));
+        }
+      });
+    }
+  };
+
   render() {
     return (
       <div className="app">
@@ -47,11 +74,14 @@ class BooksApp extends React.Component {
           path="/Search"
           render={({ history }) => (
             <AddaBook
-              books={this.state.books}
-              addBook={(book, shelf) => {
-                this.addBook(book, shelf);
-                history.push("/");
+              search={(query) => {
+                this.searchBook(query);
               }}
+              books={this.state.searchedBooks}
+              addBook={
+                this.addBook
+                // history.push("/");
+              }
             />
           )}
         />
