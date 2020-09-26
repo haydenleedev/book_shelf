@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 class ListBooks extends Component {
   static propTypes = {
     books: PropTypes.array.isRequired,
-    updateBook: PropTypes.func.isRequired,
+    updateBook: PropTypes.func,
   };
   updateBook = (book, shelf) => {
     if (this.props.addBook) {

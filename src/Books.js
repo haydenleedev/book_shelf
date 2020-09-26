@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 class Books extends Component {
   static propTypes = {
     books: PropTypes.array.isRequired,
-    handleChange: PropTypes.func.isRequired,
+    handleChange: PropTypes.func,
   };
 
   handleChange = (e, book) => {
